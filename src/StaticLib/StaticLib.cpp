@@ -68,7 +68,32 @@ bool add(tree* t, int key, const char* value)
 		return true;
 	}
 
+
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* cur = t->root;//今観ているノード
+	node* parent = NULL;//一つ前のノード
+	while (cur != NULL) {
+		parent = cur;
+
+		if (key < cur->key) {
+			cur = cur->left;
+		}
+		else if (key > cur->key) {
+			cur = cur->right;
+		}
+		else {
+			// 同じ key → value を更新
+			strcpy_s(cur->value, value);
+			free(p);
+			return true;
+		}
+	}
+	if (key < parent->key) {
+		parent->left = p;
+	}
+	else {
+		parent->right = p;
+	}
 
 	return true;
 }
@@ -77,11 +102,38 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t == NULL) return NULL;
+
+	node* cur = t->root;
+
+	while (cur != NULL) {
+		if (key < cur->key) {
+			cur = cur->left;
+		}
+		else if (key > cur->key) {
+			cur = cur->right;
+		}
+		else {//キーが見つかったら
+			return cur->value;
+		}
+	}
+
+	
 	return NULL;
 }
+void search_recursive(const node* n, void (*func)(const node* p))
+{
+	if (n == NULL) return;
 
+	search_recursive(n->left, func);
+	func(n);
+	search_recursive(n->right, func);
+}
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+		if (t == NULL || func == NULL) return;
+
+		search_recursive(t->root, func);
 }
